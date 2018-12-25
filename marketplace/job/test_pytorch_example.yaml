@@ -1,0 +1,46 @@
+name: test_pytorch_mnist
+version: master
+protocol_version: v2
+contributor: Qi Chen
+retryCount: 0
+parameters:
+  epochs: '10'
+  batchsize: '32'
+  lr: '0.01'
+description: 'image classification, mnist dataset, pytorch'
+type: job
+prerequisites:
+  - name: pytorch_examples
+    version: 1.0.0
+    contributor: Qi Chen
+    protocol_version: v2
+    uri: 'https://github.com/pytorch/examples'
+    description: pytorch examples
+    type: script
+  - name: pytorch_example
+    version: 1.0.0
+    contributor: Qi Chen
+    protocol_version: v2
+    uri: openpai/pai.example.pytorch
+    description: 'python3.5, pytorch'
+    type: dockerimage
+tasks:
+  - role: worker
+    data: ''
+    script: pytorch_examples
+    dockerimage: pytorch_example
+    parameters:
+      epochs: $$epochs$$
+      batchsize: $$batchsize$$
+      lr: $$lr$$
+    command:
+      - >-
+        python pytorch_examples/mnist/main.py --epochs $$epochs$$ --lr $$lr$$
+        --batch-size $$batchsize$$
+    resource:
+      instances: 1
+      resourcePerInstance:
+        cpu: 4
+        memoryMB: 8192
+        gpu: 1
+      portList: []
